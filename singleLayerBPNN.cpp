@@ -8,11 +8,18 @@
 using namespace std;
 
 //Giving names to the input and output of the units in different layers
-	float *X;	//the values in the input layer, input and output are same at the input layer
-	float *Z_in;	//the values in the hidden layer, input
-	float *Z_out;	//the values in the hidden layer, output
-	float *Y_in;	//the values in the output layer, input
-	float *Y_out;	//the values in the output layer, output
+float *X;	//the values in the input layer, input and output are same at the input layer
+float *Z_in;	//the values in the hidden layer, input
+float *Z_out;	//the values in the hidden layer, output
+float *Y_in;	//the values in the output layer, input
+float *Y_out;	//the values in the output layer, output
+float *Act_out;
+
+float **V,**dV,**W, **dW;
+
+int h = 4;	//default number of units in hidden layer
+int n = 2;	//default number of units in input layer
+int m = 1;	//default number of units in output layer
 
 //following is the squashing function
 	//sigmoid function is used
@@ -71,7 +78,7 @@ void calcOutputOutput()
 /**HERE**/
 //change the following arrays for your use
 	//input array
-float inputArray[] [] = {{0,0},
+float inputArray[4][2] = {{0,0},
 						 {0,1},
 						 {1,0},
 						 {1,1}};
@@ -80,9 +87,6 @@ float outPutArray[] = {0,1,1,0};
 
 int main(int argc, char* argv[])
 {
-	int h = 4;	//default number of units in hidden layer
-	int n = 2;	//default number of units in input layer
-	int m = 1;	//default number of units in output layer
 	bool condition = false;
 	long long iterCnt = 0;
 
@@ -118,23 +122,23 @@ int main(int argc, char* argv[])
 
 	float *ek = new float[m];
 	float *dk = new float[m];
-	float *dj = new float[j+1];
+	float *dj = new float[h+1];
 
 
 //Declaring the connections between the layers
 	//Connections between the layer input and hidden are called V
 	//There are n+1 X h connections between the input and hidden layer
-	float **V = new float*[n+1];
-	float **dV = new float*[n+1];
-	for(int i;i<=n;i++)
+	V = new float*[n+1];
+	dV = new float*[n+1];
+	for(int i=0;i<=n;i++)
 	{
 		*(V+i) = new float[h];
 		*(dV+i) = new float[h];
 	}
 	//Connection between the layers: hidden and output are called W
 	//There are h+1 X m connections between the hidden and output layer
-	float **W = new float*[h+1];
-	float **dW = new float*[h+1];
+	W = new float*[h+1];
+	dW = new float*[h+1];
 	for(int i=0;i<=h;i++)
 	{
 		*(W+i) = new float[m];
@@ -169,7 +173,7 @@ while(iterCnt<2500000)
 	for(int i = 1;i<=n;i++)
 		X[i] = inputArray[iterCnt%4][i];
 	for(int i=0;i<m;i++)
-		Act_out = outPutArray[iterCnt%4];
+		Act_out[i] = outPutArray[iterCnt%4];
 
 
 	//calculate input to the hidden layer
@@ -192,7 +196,7 @@ while(iterCnt<2500000)
 	//adjust the weight joining hidden and output layer based on this error value
 	for(int j=0;j<=h;j++)
 	{
-		for(int 0;k<m;k++)
+		for(int k=0;k<m;k++)
 			dW[j][k]  = alpha*dk[k]*Z_out[j];
 	}
 
@@ -214,10 +218,20 @@ while(iterCnt<2500000)
 	//change the weights of V based on this
 	for(int i=0;i<=n;i++)
 	{
-		for(int j=1;j<=h;j++)
+		for(int j=1;j<h;j++)
 			dV[i][j] = alpha*dj[j]*X[i];
 	}
 	iterCnt++;
+
+//updating the values of connection weights
+	for(int i=0;i<=n;i++)
+		for(int j=0;j<h;j++)
+			V[i][j]+=dV[i][j];
+
+
+	for(int j=0;j<=h;j++)
+		for(int k=0;k<m;k++)
+			W[j][k]+=dW[j][k];
 }
 
 //freeing memory for the array initialized above
