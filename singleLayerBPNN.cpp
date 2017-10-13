@@ -92,9 +92,9 @@ int main(int argc, char* argv[])
 
 	if(argc==4)
 	{
-		n = atoi(argv[2]);
-		h = atoi(argv[3]);
-		m = atoi(argv[4]);
+		n = atoi(argv[1]);
+		h = atoi(argv[2]);
+		m = atoi(argv[3]);
 	}else if (argc>1)
 	{
 		cout<<"Using Default values"<<endl;
