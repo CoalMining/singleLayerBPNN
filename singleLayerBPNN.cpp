@@ -1,3 +1,8 @@
+/*
+	Code written by Prawar Poudel (prawar dot poudel at hotmail dot com)
+	Use this code any way you like
+*/
+
 #include <iostream>
 #include <cstdlib>	//for random value 
 #include <time.h>
